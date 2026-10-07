@@ -6,6 +6,16 @@ function Photo({ src, alt, className = '', eager = false }: { src: string; alt: 
   const [loaded, setLoaded] = useState(false);
   return <div className={`photo-frame ${loaded ? 'loaded' : 'image-skeleton'} ${className}`}><img src={src} alt={alt} loading={eager ? 'eager' : 'lazy'} onLoad={() => setLoaded(true)} onError={() => setLoaded(true)} /></div>;
 }
+function SlideshowPhoto({ images, alt, className = '' }: { images: string[]; alt: string; className?: string }) {
+  const [index, setIndex] = useState(0);
+  useEffect(() => {
+    if (images.length < 2) return;
+    const timer = window.setInterval(() => setIndex((current) => (current + 1) % images.length), 3800);
+    return () => window.clearInterval(timer);
+  }, [images.length]);
+  if (!images.length) return null;
+  return <Photo key={images[index]} src={images[index]} alt={alt} className={`slideshow-photo ${className}`} />;
+}
 export function Hero() {
   return <section id="accueil" className="hero section-wrap">
     <div className="hero-copy fade-up">
@@ -69,23 +79,24 @@ export function Tourism() {
 export function Projects() {
   return <section id="projets" className="projects-section section-wrap">
     <div className="section-topline"><div><span className="eyebrow">Projets</span><h2 className="section-title">{pageCopy.projects.title} <em>{pageCopy.projects.titleAccent}</em></h2><p className="body-copy">{pageCopy.projects.intro}</p></div><span className="projects-mark">M’A<br /><small>PORTFOLIO</small></span></div>
-    <div className="project-grid">{projects.map((project) => <article className="featured-project" key={project.title}><Photo src={project.image} alt="Événement de beauté BAIP Burundi" /><div className="project-overlay" /><span className="project-category">{project.category}</span><div className="project-copy"><small>Projet vedette · Burundi</small><h3>{project.title}</h3><p>{project.subtitle}</p></div><span className="project-arrow"><Icon name="arrow" size={21} /></span></article>)}<article className="project-coming"><span className="coming-symbol">+</span><small>La suite s’écrit ensemble</small><h3>{pageCopy.projects.placeholder}</h3><a href="#contact">Proposez un projet <Icon name="arrow" size={15} /></a></article></div>
+    <div className="project-grid">{projects.map((project) => <article className="featured-project" key={project.title}><SlideshowPhoto images={project.images} alt={`Photos du ${project.title}`} /><div className="project-overlay" /><span className="project-category">{project.category}</span><div className="project-copy"><small>Projet vedette · Burundi</small><h3>{project.title}</h3><p>{project.subtitle}</p></div><span className="project-arrow"><Icon name="arrow" size={21} /></span></article>)}<article className="project-coming"><span className="coming-symbol">+</span><small>La suite s’écrit ensemble</small><h3>{pageCopy.projects.placeholder}</h3><a href="#contact">Proposez un projet <Icon name="arrow" size={15} /></a></article></div>
   </section>;
 }
 export function News() {
   return <section id="actualites" className="news-section">
     <div className="section-wrap"><div className="news-head"><div><span className="eyebrow">Actualités</span><h2 className="section-title">{pageCopy.news.title} <em>{pageCopy.news.titleAccent}</em></h2></div><p className="body-copy">{pageCopy.news.intro}</p></div>
-      <div className="news-grid">{articles.map((article, index) => <article className={`news-card news-${index + 1}`} key={article.title} data-testid={`card-news-${index + 1}`}><a href="#contact" className="news-image-link" aria-label={`En savoir plus : ${article.title}`} data-testid={`link-news-image-${index + 1}`}><Photo src={article.image} alt={article.title} /><span className="news-open"><Icon name="arrow" /></span></a><div className="news-meta"><span>{article.category}</span><time>{article.date}</time></div><h3>{article.title}</h3><p>{article.excerpt}</p><a className="text-link" href="#contact" data-testid={`link-news-more-${index + 1}`}>Lire la suite <Icon name="arrow" size={15} /></a></article>)}</div>
+      <div className="news-grid">{articles.map((article, index) => <article className={`news-card news-${index + 1}`} key={article.title} data-testid={`card-news-${index + 1}`}><div className="news-image-link"><SlideshowPhoto images={article.images} alt={article.title} /></div><div className="news-meta"><span>{article.category}</span><time>{article.date}</time></div><h3>{article.title}</h3><p>{article.excerpt}</p></article>)}</div>
     </div>
   </section>;
 }
-export function Gallery() {
+export function Gallery({ fullPage = false }: { fullPage?: boolean }) {
   const [filter, setFilter] = useState('Tous');
   const [active, setActive] = useState<number | null>(null);
   const touchStart = useRef<number | null>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLElement | null>(null);
-  const visible = galleryItems.map((item, originalIndex) => ({ ...item, originalIndex })).filter((item) => filter === 'Tous' || item.category === filter);
+  const shownItems = fullPage ? galleryItems : galleryItems.slice(0, 8);
+  const visible = shownItems.map((item, originalIndex) => ({ ...item, originalIndex })).filter((item) => !fullPage || filter === 'Tous' || item.category === filter);
   const close = () => { setActive(null); window.setTimeout(() => triggerRef.current?.focus(), 0); };
   const move = (direction: number) => { if (active === null) return; const current = visible.findIndex((item) => item.originalIndex === active); const next = (current + direction + visible.length) % visible.length; setActive(visible[next].originalIndex); };
   useEffect(() => {
@@ -106,10 +117,11 @@ export function Gallery() {
     return () => { document.removeEventListener('keydown', key); document.body.style.overflow = ''; };
   }, [active, visible.length]);
   const current = active === null ? null : galleryItems[active];
-  return <section id="galerie" className="gallery-section section-wrap">
-    <div className="gallery-heading"><div><span className="eyebrow">Galerie</span><h2 className="section-title">{pageCopy.gallery.title} <em>{pageCopy.gallery.titleAccent}</em></h2></div><p>{pageCopy.gallery.intro}</p></div>
-    <div className="gallery-filters" role="group" aria-label="Filtrer la galerie">{[pageCopy.gallery.allFilter, ...filters].map((item) => <button key={item} onClick={() => setFilter(item)} className={filter === item ? 'selected' : ''} aria-pressed={filter === item} data-testid={`button-gallery-filter-${item}`}>{item}</button>)}</div>
-    <div className="gallery-grid">{visible.map((item, index) => <button className={`gallery-item gallery-item-${index % 4 + 1}`} key={item.title} onClick={(event) => { triggerRef.current = event.currentTarget; setActive(item.originalIndex); }} aria-label={`Ouvrir : ${item.title}`} data-testid={`button-gallery-item-${item.originalIndex}`}><Photo src={item.image} alt={item.title} /><span className="gallery-hover"><Icon name="expand" size={22} /><small>{item.title}</small></span></button>)}</div>
+  return <section id="galerie" className={`gallery-section section-wrap ${fullPage ? 'gallery-full-section' : ''}`}>
+    <div className="gallery-heading"><div><span className="eyebrow">Galerie</span><h2 className="section-title">{fullPage ? 'Toutes nos' : pageCopy.gallery.title} <em>{fullPage ? 'photos' : pageCopy.gallery.titleAccent}</em></h2></div><p>{pageCopy.gallery.intro}</p></div>
+    {fullPage && <div className="gallery-filters" role="group" aria-label="Filtrer la galerie">{[pageCopy.gallery.allFilter, ...filters].map((item) => <button key={item} onClick={() => setFilter(item)} className={filter === item ? 'selected' : ''} aria-pressed={filter === item} data-testid={`button-gallery-filter-${item}`}>{item}</button>)}</div>}
+    <div className="gallery-grid">{visible.map((item, index) => <button className={`gallery-item gallery-item-${index % 8 + 1}`} key={item.title} onClick={(event) => { triggerRef.current = event.currentTarget; setActive(item.originalIndex); }} aria-label={`Ouvrir : ${item.title}`} data-testid={`button-gallery-item-${item.originalIndex}`}><Photo src={item.image} alt={item.title} /><span className="gallery-hover"><Icon name="expand" size={22} /><small>{item.title}</small></span></button>)}</div>
+    {!fullPage && <a className="gallery-view-all" href="/galerie">Voir toute la galerie <Icon name="arrow" size={17} /></a>}
     {current && <div className="lightbox" ref={dialogRef} tabIndex={-1} role="dialog" aria-modal="true" aria-label={`Galerie : ${current.title}`} onClick={close} onTouchStart={(e) => { touchStart.current = e.touches[0].clientX; }} onTouchEnd={(e) => { if (touchStart.current !== null && Math.abs(e.changedTouches[0].clientX - touchStart.current) > 55) move(e.changedTouches[0].clientX < touchStart.current ? 1 : -1); touchStart.current = null; }}><button className="lightbox-close" onClick={close} aria-label="Fermer" data-testid="button-lightbox-close"><Icon name="close" /></button><button className="lightbox-prev" onClick={(e) => { e.stopPropagation(); move(-1); }} aria-label="Image précédente" data-testid="button-lightbox-previous"><Icon name="left" /></button><figure onClick={(e) => e.stopPropagation()}><img src={current.image} alt={current.title} /><figcaption>{current.title}<span>{current.category}</span></figcaption></figure><button className="lightbox-next" onClick={(e) => { e.stopPropagation(); move(1); }} aria-label="Image suivante" data-testid="button-lightbox-next"><Icon name="right" /></button><p className="lightbox-hint">← → naviguer · Échap fermer</p></div>}
   </section>;
 }

@@ -1,3 +1,18 @@
+const activityPhotoModules = import.meta.glob<string>('../assets/activity_*/*.JPG', { eager: true, query: '?url', import: 'default' });
+const folderPhotoCounts: Record<string, number> = {};
+const activityOrder: Record<string, number> = { '16Aout': 0, '9Septembre': 1, '19septembre': 2 };
+const activityPhotos = Object.entries(activityPhotoModules).sort(([left], [right]) => {
+  const leftFolder = left.match(/activity_(.*?)\//)?.[1] ?? '';
+  const rightFolder = right.match(/activity_(.*?)\//)?.[1] ?? '';
+  return (activityOrder[leftFolder] ?? 9) - (activityOrder[rightFolder] ?? 9) || left.localeCompare(right);
+}).map(([path, image]) => {
+  const folder = path.match(/activity_(.*?)\//)?.[1] ?? 'activité';
+  const dateLabel = folder === '16Aout' ? '16 août' : folder === '9Septembre' ? '9 septembre' : '19 septembre';
+  folderPhotoCounts[folder] = (folderPhotoCounts[folder] ?? 0) + 1;
+  return { path, image, folder, dateLabel, photoNumber: folderPhotoCounts[folder] };
+});
+const photosFor = (folder: string) => activityPhotos.filter((photo) => photo.folder === folder).map((photo) => photo.image);
+
 export const pageCopy = {
   hero: {
     badge: 'Communication • Événementiel • Tourisme',
@@ -43,7 +58,7 @@ export const pageCopy = {
   news: {
     title: 'Dernières',
     titleAccent: 'actualités',
-    intro: 'Les événements, projets, partenariats et activités de Maison d’An, ainsi que des contenus sur le tourisme, la culture et les opportunités au Burundi.',
+    intro: 'Retour sur les temps forts du BAIP Burundi 2026 : du lancement et casting à la demi-finale.',
   },
   gallery: {
     title: 'Notre',
@@ -54,10 +69,7 @@ export const pageCopy = {
   contact: {
     title: 'TRAVAILLONS',
     titleAccent: 'ENSEMBLE',
-    intro: 'Vous avez un projet, un événement, une marque ou une initiative touristique ? Créons quelque chose de significatif ensemble.',
-    formTitle: 'Parlons de votre idée',
-    formIntro: 'Nous vous répondrons dès que possible.',
-    note: 'Vos informations restent confidentielles.',
+    intro: 'Pour toute demande de collaboration ou d’information, contactez-nous directement par WhatsApp, e-mail ou Instagram.',
   },
   brand: {
     name: 'Maison d’An',
@@ -96,21 +108,29 @@ export const tourismDestinations = [
   { name: 'Culture et traditions burundaises', category: 'Culture', image: '/images/gishora-drummers.jpg' },
 ];
 export const projects = [
-  { title: 'BAIP Burundi', subtitle: 'Beauty of Africa International Pageant — Burundi', category: 'Image & Pageantry', image: '/images/pageantry.jpg' },
+  { title: 'BAIP Burundi 2026', subtitle: 'Beauty of Africa International Pageant — Burundi', category: 'Image & Pageantry', images: photosFor('19septembre') },
 ];
 export const articles = [
-  { category: 'Événementiel', date: '2025', title: 'Les événements qui rapprochent', excerpt: 'Les événements, projets, partenariats et activités de Maison d’An.', image: '/images/pageantry.jpg' },
-  { category: 'Tourisme', date: '2025', title: 'Le Burundi, une beauté à raconter', excerpt: 'Des paysages, des cultures et des histoires à faire découvrir.', image: '/images/burundi-lake.jpg' },
-  { category: 'Culture', date: '2025', title: 'Au rythme des tambours du Burundi', excerpt: 'Une tradition vivante qui porte l’énergie et la mémoire du pays.', image: '/images/gishora-drummers.jpg' },
+  { category: 'Lancement & casting', date: '16 août 2026', title: 'Lancement officiel du BAIP Burundi 2026', excerpt: 'Le lancement du concours et le casting ont marqué le début de l’aventure BAIP Burundi 2026.', images: photosFor('16Aout') },
+  { category: 'Culture & tourisme', date: '9 septembre 2026', title: 'Rencontre avec la directrice générale du tourisme', excerpt: 'Les demi-finalistes ont été accueillies par la directrice générale du tourisme et ont visité le Palais des Arts.', images: photosFor('9Septembre') },
+  { category: 'Demi-finale', date: '19 septembre 2026', title: 'La demi-finale du BAIP Burundi 2026', excerpt: 'Les demi-finalistes se sont retrouvées au King’s Conference Center pour la demi-finale du concours.', images: photosFor('19septembre') },
 ];
+const activityGalleryItems = activityPhotos.map(({ image, folder, dateLabel, photoNumber }) => ({
+    title: `BAIP Burundi · ${dateLabel} · photo ${String(photoNumber).padStart(2, '0')}`,
+    category: folder === '16Aout' ? 'Projets' : 'Événements',
+    image,
+    folder,
+  }));
+const activityGalleryPreview = ['16Aout', '9Septembre', '19septembre'].flatMap((folder) => activityGalleryItems.filter((item) => item.folder === folder).slice(0, 3));
+const previewPhotoPaths = new Set(activityGalleryPreview.map((item) => item.image));
 export const galleryItems = [
+  ...activityGalleryPreview,
+  ...activityGalleryItems.filter((item) => !previewPhotoPaths.has(item.image)),
   { title: 'Lac Tanganyika', category: 'Tourisme', image: '/images/burundi-lake.jpg' },
   { title: 'Tambours de Gishora', category: 'Culture', image: '/images/gishora-drummers.jpg' },
-  { title: 'BAIP Burundi', category: 'Projets', image: '/images/pageantry.jpg' },
+  { title: 'BAIP Burundi 2026 · King’s Conference Center', category: 'Projets', image: photosFor('19septembre')[0] },
   { title: 'Collines du Burundi', category: 'Tourisme', image: '/images/kibira-hills.jpg' },
   { title: 'Café burundais', category: 'Culture', image: '/images/burundi-coffee.jpg' },
   { title: 'Bujumbura', category: 'Tourisme', image: '/images/bujumbura.jpg' },
-  { title: 'Image & Pageantry', category: 'Portraits', image: '/images/pageantry.jpg' },
-  { title: 'Traditions burundaises', category: 'Événements', image: '/images/gishora-drummers.jpg' },
 ];
 export const filters = ['Événements', 'Tourisme', 'Culture', 'Projets', 'Portraits'];

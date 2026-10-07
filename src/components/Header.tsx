@@ -15,7 +15,7 @@ export function Header({ active }: { active: string }) {
   return <header className={`site-header ${scrolled ? 'scrolled' : ''}`}>
     <div className="header-inner">
       <a className="brand" href="#accueil" onClick={(e) => { e.preventDefault(); navigate('accueil'); }} aria-label="Maison d’An, accueil" data-testid="link-brand-home">
-        <img className="brand-logo" src="/maisondan_logo.png" alt="Maison d’An" />
+        <img className="brand-logo" src="/maisondan_logo-nobg.png" alt="Maison d’An" />
       </a>
       <nav className="desktop-nav" aria-label="Navigation principale">{navItems.map((item) => <a key={item.id} className={active === item.id ? 'active' : ''} href={`#${item.id}`} aria-current={active === item.id ? 'location' : undefined} data-testid={`nav-${item.id}`}>{item.label}</a>)}</nav>
       <a className="header-cta" href="#contact" data-testid="link-header-contact">Nous contacter <Icon name="arrow" size={16} /></a>

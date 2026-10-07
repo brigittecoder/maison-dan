@@ -61,8 +61,16 @@ function Home() {
     <a className="whatsapp-float" href={pageCopy.brand.whatsappUrl} target="_blank" rel="noreferrer" aria-label="Contacter Maison d’An sur WhatsApp"><WhatsAppIcon size={25} /><span>Discutons</span></a>
   </div>;
 }
+function GalleryPage() {
+  useEffect(() => { document.title = `Galerie — ${pageCopy.brand.name}`; }, []);
+  return <div className="gallery-page">
+    <header className="gallery-page-header section-wrap"><a className="brand" href="/" aria-label="Retour à l’accueil"><img className="brand-logo" src="/maisondan_logo.png" alt="Maison d’An" /></a><a className="btn-secondary" href="/">Retour au site <Icon name="arrow" size={15} /></a></header>
+    <main><Gallery fullPage /></main>
+    <footer className="gallery-page-footer"><span>{pageCopy.brand.copyright}</span><a href="/">Retour à l’accueil</a></footer>
+  </div>;
+}
 function Router() {
-  return <ErrorBoundary resetKey={useLocation()[0]}><Switch><Route path="/" component={Home} /><Route component={NotFound} /></Switch></ErrorBoundary>;
+  return <ErrorBoundary resetKey={useLocation()[0]}><Switch><Route path="/" component={Home} /><Route path="/galerie" component={GalleryPage} /><Route component={NotFound} /></Switch></ErrorBoundary>;
 }
 function App() {
   return <QueryClientProvider client={queryClient}><TooltipProvider><WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}><Router /></WouterRouter><Toaster /></TooltipProvider></QueryClientProvider>;
