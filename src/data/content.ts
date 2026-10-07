@@ -69,7 +69,7 @@ export const pageCopy = {
     instagramUrl: 'https://www.instagram.com/maisondan257/',
     whatsappUrl: 'https://wa.me/25765087149',
     coordinates: '03°22′S · 29°22′E',
-    copyright: '© 2025 Maison d’An. Tous droits réservés. Bujumbura, Burundi 🇧🇮',
+    copyright: '© 2025 Maison d’An. Tous droits réservés. Bujumbura, Burundi',
   },
 };
 
