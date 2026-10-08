@@ -72,7 +72,7 @@ export const pageCopy = {
   gallery: {
     title: 'Notre',
     titleAccent: 'galerie',
-    intro: 'Un regard sur les lieux, les histoires et les moments qui nous inspirent.',
+    intro: 'Les activités du BAIP Burundi, classées par date, et les lieux qui nous inspirent.',
     allFilter: 'Tous',
   },
   contact: {
@@ -121,26 +121,30 @@ export const projects = [
   { title: 'BAIP Burundi 2026', subtitle: 'Beauty of Africa International Pageant — Burundi', category: 'Image & Pageantry', images: photosFor('19septembre') },
 ];
 export const articles = [
-  { category: 'Lancement & casting', date: '16 août 2026', title: 'Lancement officiel du BAIP Burundi 2026', excerpt: 'Le lancement du concours et le casting ont marqué le début de l’aventure BAIP Burundi 2026.', images: photosFor('16Aout') },
-  { category: 'Culture & tourisme', date: '9 septembre 2026', title: 'Rencontre avec la directrice générale du tourisme', excerpt: 'Les demi-finalistes ont été accueillies par la directrice générale du tourisme et ont visité le Palais des Arts.', images: photosFor('9Septembre') },
-  { category: 'Demi-finale', date: '19 septembre 2026', title: 'La demi-finale du BAIP Burundi 2026', excerpt: 'Les demi-finalistes se sont retrouvées au King’s Conference Center pour la demi-finale du concours.', images: photosFor('19septembre') },
+  { id: 'lancement-baip-2026', category: 'Lancement & casting', date: '16 août 2026', title: 'Lancement officiel du BAIP Burundi 2026', excerpt: 'Le lancement du concours et le casting ont marqué le début de l’aventure BAIP Burundi 2026.', description: 'Le 16 août 2026 a eu lieu le lancement officiel du Beauty of Africa International Pageant Burundi 2026 et le casting des candidates.', images: photosFor('16Aout') },
+  { id: 'visite-demi-finalistes', category: 'Culture & tourisme', date: '9 septembre 2026', title: 'Accueil des demi-finalistes et visite du Palais des Arts', excerpt: 'Les demi-finalistes ont été accueillies par la directrice générale du tourisme et ont visité le Palais des Arts.', description: 'Le 9 septembre 2026, les demi-finalistes ont été accueillies par la directrice générale du tourisme. Cette rencontre a aussi été l’occasion de visiter le Palais des Arts.', images: photosFor('9Septembre') },
+  { id: 'demi-finale-baip-2026', category: 'Demi-finale', date: '19 septembre 2026', title: 'La demi-finale du BAIP Burundi 2026', excerpt: 'Les demi-finalistes se sont retrouvées au King’s Conference Center pour la demi-finale du concours.', description: 'Le 19 septembre 2026, la demi-finale du Beauty of Africa International Pageant Burundi s’est tenue au King’s Conference Center.', images: photosFor('19septembre') },
 ];
+const activityByFolder = { '16Aout': articles[0], '9Septembre': articles[1], '19septembre': articles[2] };
 const activityGalleryItems = activityPhotos.map(({ image, folder, dateLabel, photoNumber }) => ({
     title: `BAIP Burundi · ${dateLabel} · photo ${String(photoNumber).padStart(2, '0')}`,
     category: folder === '16Aout' ? 'Projets' : 'Événements',
     image,
     folder,
+    activityId: activityByFolder[folder as keyof typeof activityByFolder]?.id ?? '',
+    activity: activityByFolder[folder as keyof typeof activityByFolder]?.title ?? 'Activité BAIP Burundi',
+    date: activityByFolder[folder as keyof typeof activityByFolder]?.date ?? `${dateLabel} 2026`,
+    description: activityByFolder[folder as keyof typeof activityByFolder]?.description ?? '',
   }));
 const activityGalleryPreview = ['16Aout', '9Septembre', '19septembre'].flatMap((folder) => activityGalleryItems.filter((item) => item.folder === folder).slice(0, 3));
 const previewPhotoPaths = new Set(activityGalleryPreview.map((item) => item.image));
 export const galleryItems = [
   ...activityGalleryPreview,
   ...activityGalleryItems.filter((item) => !previewPhotoPaths.has(item.image)),
-  { title: 'Lac Tanganyika', category: 'Tourisme', image: '/images/burundi-lake.jpg' },
-  { title: 'Tambours de Gishora', category: 'Culture', image: '/images/gishora-drummers.jpg' },
-  { title: 'BAIP Burundi 2026 · King’s Conference Center', category: 'Projets', image: photosFor('19septembre')[0] },
-  { title: 'Collines du Burundi', category: 'Tourisme', image: '/images/kibira-hills.jpg' },
-  { title: 'Café burundais', category: 'Culture', image: '/images/burundi-coffee.jpg' },
-  { title: 'Bujumbura', category: 'Tourisme', image: '/images/bujumbura.jpg' },
+  { title: 'Lac Tanganyika', category: 'Tourisme', image: '/images/burundi-lake.jpg', activity: 'Lieux & culture', date: '', activityId: '', description: '' },
+  { title: 'Tambours de Gishora', category: 'Culture', image: '/images/gishora-drummers.jpg', activity: 'Lieux & culture', date: '', activityId: '', description: '' },
+  { title: 'Collines du Burundi', category: 'Tourisme', image: '/images/kibira-hills.jpg', activity: 'Lieux & culture', date: '', activityId: '', description: '' },
+  { title: 'Café burundais', category: 'Culture', image: '/images/burundi-coffee.jpg', activity: 'Lieux & culture', date: '', activityId: '', description: '' },
+  { title: 'Bujumbura', category: 'Tourisme', image: '/images/bujumbura.jpg', activity: 'Lieux & culture', date: '', activityId: '', description: '' },
 ];
 export const filters = ['Événements', 'Tourisme', 'Culture', 'Projets', 'Portraits'];

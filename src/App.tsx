@@ -4,6 +4,7 @@ import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import NotFound from '@/pages/not-found';
+import ActivityDetailPage from '@/pages/activity-detail';
 import { Route, Switch, useLocation, Router as WouterRouter } from 'wouter';
 import { Header } from './components/Header';
 import { Icon, WhatsAppIcon } from './components/Icons';
@@ -70,7 +71,7 @@ function GalleryPage() {
   </div>;
 }
 function Router() {
-  return <ErrorBoundary resetKey={useLocation()[0]}><Switch><Route path="/" component={Home} /><Route path="/galerie" component={GalleryPage} /><Route component={NotFound} /></Switch></ErrorBoundary>;
+  return <ErrorBoundary resetKey={useLocation()[0]}><Switch><Route path="/" component={Home} /><Route path="/galerie" component={GalleryPage} /><Route path="/activites/:activityId" component={ActivityDetailPage} /><Route component={NotFound} /></Switch></ErrorBoundary>;
 }
 function App() {
   return <QueryClientProvider client={queryClient}><TooltipProvider><WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}><Router /></WouterRouter><Toaster /></TooltipProvider></QueryClientProvider>;
