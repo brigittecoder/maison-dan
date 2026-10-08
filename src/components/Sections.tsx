@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { articles, filters, galleryItems, pageCopy, projects, services, tourismDestinations } from '../data/content';
+import { articles, filters, galleryItems, heroImages, pageCopy, projects, services, tourismDestinations } from '../data/content';
 import { Icon } from './Icons';
 
 function Photo({ src, alt, className = '', eager = false }: { src: string; alt: string; className?: string; eager?: boolean }) {
   const [loaded, setLoaded] = useState(false);
   return <div className={`photo-frame ${loaded ? 'loaded' : 'image-skeleton'} ${className}`}><img src={src} alt={alt} loading={eager ? 'eager' : 'lazy'} onLoad={() => setLoaded(true)} onError={() => setLoaded(true)} /></div>;
 }
-function SlideshowPhoto({ images, alt, className = '' }: { images: string[]; alt: string; className?: string }) {
+function SlideshowPhoto({ images, alt, className = '', eager = false }: { images: string[]; alt: string; className?: string; eager?: boolean }) {
   const [index, setIndex] = useState(0);
   useEffect(() => {
     if (images.length < 2) return;
@@ -14,7 +14,7 @@ function SlideshowPhoto({ images, alt, className = '' }: { images: string[]; alt
     return () => window.clearInterval(timer);
   }, [images.length]);
   if (!images.length) return null;
-  return <Photo key={images[index]} src={images[index]} alt={alt} className={`slideshow-photo ${className}`} />;
+  return <Photo key={images[index]} src={images[index]} alt={alt} className={`slideshow-photo ${className}`} eager={eager} />;
 }
 export function Hero() {
   return <section id="accueil" className="hero section-wrap">
@@ -27,7 +27,7 @@ export function Hero() {
       <div className="hero-caption"><span className="caption-line" /> {pageCopy.hero.caption}</div>
     </div>
     <div className="hero-visual">
-      <Photo src="/images/burundi-lake.jpg" alt="Le lac Tanganyika et les collines du Burundi à la lumière du soir" className="hero-image" eager />
+      <SlideshowPhoto images={heroImages} alt="Moments des activités du BAIP Burundi 2026" className="hero-image" eager />
       <div className="hero-location"><span className="hero-location-dot" aria-hidden="true" /><span>{pageCopy.brand.location}<b>{pageCopy.brand.coordinates}</b></span></div>
     </div>
     <div className="stats-row">{pageCopy.hero.stats.map(([num, label]) => <div className="stat-item" key={label}><strong>{num}</strong><span>{label}</span></div>)}</div>

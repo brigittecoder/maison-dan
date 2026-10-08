@@ -12,6 +12,15 @@ const activityPhotos = Object.entries(activityPhotoModules).sort(([left], [right
   return { path, image, folder, dateLabel, photoNumber: folderPhotoCounts[folder] };
 });
 const photosFor = (folder: string) => activityPhotos.filter((photo) => photo.folder === folder).map((photo) => photo.image);
+const photoByFileName = (fileName: string) => activityPhotos.find((photo) => photo.path.endsWith(`/${fileName}`))?.image;
+export const heroImages = [
+  photoByFileName('cf621e31-978e-4ee3-9684-e14d0d76cfa9.JPG'),
+  photoByFileName('dc758fa2-fb77-44f8-8cd0-f37564c521f3.JPG'),
+  photoByFileName('e5f26d7d-f141-4491-a670-89cdeded4b65.JPG'),
+  photoByFileName('29b1946c-1688-4c5f-a9c8-2e6561e6c9d7.JPG'),
+  photoByFileName('3b0b7297-b0ee-427e-8af5-191f827d0a72.JPG'),
+  photoByFileName('c87a3917-d756-48fc-9498-44b95addc1fb.JPG'),
+].filter((image): image is string => Boolean(image));
 
 export const pageCopy = {
   hero: {
