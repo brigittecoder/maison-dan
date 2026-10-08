@@ -101,11 +101,12 @@ export const services = [
 export const tourismDestinations = [
   { name: 'Gishora', category: 'Culture', image: '/images/gishora-drummers.jpg' },
   { name: 'Lac Tanganyika', category: 'Nature', image: '/images/burundi-lake.jpg' },
-  { name: 'Chutes de Karera', category: 'Nature', image: '/images/kibira-hills.jpg' },
+  { name: 'Chutes de Karera', category: 'Nature', image: '/images/chutes-de-karera.jpg' },
   { name: 'Kibira', category: 'Nature', image: '/images/kibira-hills.jpg' },
-  { name: 'Gitega', category: 'Patrimoine', image: '/images/bujumbura.jpg' },
+  { name: 'Gitega', category: 'Patrimoine', image: '/images/gitega.jpeg' },
+  { name: 'Bujumbura', category: 'Ville', image: '/images/bujumbura.jpg' },
   { name: 'Café burundais', category: 'Gastronomie', image: '/images/burundi-coffee.jpg' },
-  { name: 'Culture et traditions burundaises', category: 'Culture', image: '/images/gishora-drummers.jpg' },
+  { name: 'Culture et traditions burundaises', category: 'Culture', image: '/images/culture-burundaise.jpg' },
 ];
 export const projects = [
   { title: 'BAIP Burundi 2026', subtitle: 'Beauty of Africa International Pageant — Burundi', category: 'Image & Pageantry', images: photosFor('19septembre') },

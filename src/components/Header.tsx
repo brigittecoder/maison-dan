@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { navItems, pageCopy } from '../data/content';
 import { Icon } from './Icons';
 
@@ -11,21 +12,35 @@ export function Header({ active }: { active: string }) {
     window.addEventListener('scroll', update, { passive: true });
     return () => window.removeEventListener('scroll', update);
   }, []);
+  useEffect(() => {
+    if (!open) return;
+    const previousOverflow = document.body.style.overflow;
+    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === 'Escape') setOpen(false); };
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [open]);
   const navigate = (id: string) => { setOpen(false); document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }); };
-  return <header className={`site-header ${scrolled ? 'scrolled' : ''}`}>
-    <div className="header-inner">
-      <a className="brand" href="#accueil" onClick={(e) => { e.preventDefault(); navigate('accueil'); }} aria-label="Maison d’An, accueil" data-testid="link-brand-home">
-        <img className="brand-logo" src="/maisondan_logo-nobg.png" alt="Maison d’An" />
-      </a>
-      <nav className="desktop-nav" aria-label="Navigation principale">{navItems.map((item) => <a key={item.id} className={active === item.id ? 'active' : ''} href={`#${item.id}`} aria-current={active === item.id ? 'location' : undefined} data-testid={`nav-${item.id}`}>{item.label}</a>)}</nav>
-      <a className="header-cta" href="#contact" data-testid="link-header-contact">Nous contacter <Icon name="arrow" size={16} /></a>
-      <button className="mobile-menu-toggle" onClick={() => setOpen(!open)} aria-label={open ? 'Fermer le menu' : 'Ouvrir le menu'} aria-expanded={open} data-testid="button-mobile-menu"><Icon name={open ? 'close' : 'menu'} size={23} /></button>
-    </div>
-    <div className={`mobile-nav ${open ? 'is-open' : ''}`} aria-hidden={!open} inert={!open}>
-      <nav aria-label="Navigation mobile">{navItems.map((item, i) => <a key={item.id} className={active === item.id ? 'active' : ''} aria-current={active === item.id ? 'location' : undefined} style={{ transitionDelay: open ? `${i * 40}ms` : '0ms' }} href={`#${item.id}`} onClick={() => setOpen(false)} data-testid={`mobile-nav-${item.id}`}>{item.label}<span>0{i + 1}</span></a>)}
-        <a className="mobile-nav-contact" href="#contact" onClick={() => setOpen(false)} data-testid="link-mobile-contact">Nous contacter <Icon name="arrow" /></a>
-      </nav>
-      <div className="mobile-nav-foot">Créer. Connecter. Promouvoir. <span>Bujumbura, Burundi</span></div>
-    </div>
-  </header>;
+  const mobileMenu = <div id="mobile-navigation" className={`mobile-nav ${open ? 'is-open' : ''}`} aria-hidden={!open} inert={!open}>
+    <nav aria-label="Navigation mobile">{navItems.map((item, i) => <a key={item.id} className={active === item.id ? 'active' : ''} aria-current={active === item.id ? 'location' : undefined} style={{ transitionDelay: open ? `${i * 40}ms` : '0ms' }} href={`#${item.id}`} onClick={() => setOpen(false)} data-testid={`mobile-nav-${item.id}`}>{item.label}<span>0{i + 1}</span></a>)}
+      <a className="mobile-nav-contact" href="#contact" onClick={() => setOpen(false)} data-testid="link-mobile-contact">Nous contacter <Icon name="arrow" /></a>
+    </nav>
+    <div className="mobile-nav-foot">Créer. Connecter. Promouvoir. <span>Bujumbura, Burundi</span></div>
+  </div>;
+  return <>
+    <header className={`site-header ${scrolled ? 'scrolled' : ''} ${open ? 'menu-open' : ''}`}>
+      <div className="header-inner">
+        <a className="brand" href="#accueil" onClick={(e) => { e.preventDefault(); navigate('accueil'); }} aria-label="Maison d’An, accueil" data-testid="link-brand-home">
+          <img className="brand-logo" src="/maisondan_logo-nobg.png" alt="Maison d’An" />
+        </a>
+        <nav className="desktop-nav" aria-label="Navigation principale">{navItems.map((item) => <a key={item.id} className={active === item.id ? 'active' : ''} href={`#${item.id}`} aria-current={active === item.id ? 'location' : undefined} data-testid={`nav-${item.id}`}>{item.label}</a>)}</nav>
+        <a className="header-cta" href="#contact" data-testid="link-header-contact">Nous contacter <Icon name="arrow" size={16} /></a>
+        <button className="mobile-menu-toggle" onClick={() => setOpen(!open)} aria-label={open ? 'Fermer le menu' : 'Ouvrir le menu'} aria-expanded={open} aria-controls="mobile-navigation" data-testid="button-mobile-menu"><Icon name={open ? 'close' : 'menu'} size={23} /></button>
+      </div>
+    </header>
+    {createPortal(mobileMenu, document.body)}
+  </>;
 }

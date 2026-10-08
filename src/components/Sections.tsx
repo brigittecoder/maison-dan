@@ -28,9 +28,7 @@ export function Hero() {
     </div>
     <div className="hero-visual">
       <Photo src="/images/burundi-lake.jpg" alt="Le lac Tanganyika et les collines du Burundi à la lumière du soir" className="hero-image" eager />
-      <div className="floating-card float-one"><span className="float-symbol"><Icon name="message" size={17} /></span><div><strong>Communication</strong><small>Des idées qui rapprochent</small></div></div>
-      <div className="floating-card float-three"><span className="float-symbol red"><Icon name="location" size={17} /></span><div><strong>Tourisme</strong><small>Le Burundi à découvrir</small></div></div>
-          <div className="hero-location"><span className="hero-location-dot" aria-hidden="true" /><span>{pageCopy.brand.location}<b>{pageCopy.brand.coordinates}</b></span></div>
+      <div className="hero-location"><span className="hero-location-dot" aria-hidden="true" /><span>{pageCopy.brand.location}<b>{pageCopy.brand.coordinates}</b></span></div>
     </div>
     <div className="stats-row">{pageCopy.hero.stats.map(([num, label]) => <div className="stat-item" key={label}><strong>{num}</strong><span>{label}</span></div>)}</div>
   </section>;
